@@ -5,15 +5,12 @@
  */
 package p2p_udp_chat_part1;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -67,6 +64,7 @@ public class TCPServer extends javax.swing.JFrame {
 
         jLabel1.setText("port ");
 
+        jTextField_port.setText("9876");
         jTextField_port.setToolTipText("");
         jTextField_port.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,7 +136,7 @@ public class TCPServer extends javax.swing.JFrame {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       new Thread() {
+new Thread() {
 @Override
 public void run() {     try {
             ServerSocket server;
@@ -156,19 +154,34 @@ public void run() {     try {
                 String message;
               
                     message = (String) ois.readObject();
-               
+                if(message.contains("login")){
+                   message =message.replace("login", "");
+                     model.addElement(message);
+                     
+               }else if(message.contains("logout")){
+                   
+                    message =message.replace("logout", "");
+               if( model.removeElement(message))
+                      System.out.println("logout");
+               }
+               jList1.setModel(model);
                 System.out.println("Message Received: " + message);
-                model.addElement(message);
-                jList1.setModel(model);
+              
                 //create ObjectOutputStream object
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 //write object to Socket
-                oos.writeObject("Hi Client "+message);
+                
+                oos.writeObject(model);
+                try {
+                    online();
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 //close resources
                 ois.close();
                 oos.close();
                 socket.close();
-                //terminate the server if client sends exit request
+                //terminate the server if client sends exit reque st
                 if(message.equalsIgnoreCase("exit")) break;
             }
             System.out.println("Shutting down Socket server!!");
@@ -183,7 +196,61 @@ public void run() {     try {
        }
 }.start();  
     }//GEN-LAST:event_jButton1ActionPerformed
-
+ public void online() throws CloneNotSupportedException{
+     
+     for(int i=0;i<model.getSize();i++){
+          try {
+             InetAddress host;
+         
+             host = InetAddress.getLocalHost();
+        
+         Socket socket = null;
+         ObjectOutputStream oos = null;
+         ObjectInputStream ois = null;
+        
+             
+                 String[] stringarry = model.get(i).split(":");
+                 String ports =stringarry[1];
+               //  System.out.println(ports);
+                     DefaultListModel<String> modeltemp = new DefaultListModel<>();
+                     for(Object obj :model.toArray()){
+  modeltemp.addElement((String) obj);
+}
+                  
+                         modeltemp.removeElement(model.get(i));
+                 //establish socket connection to server
+                 socket = new Socket(host.getHostName(), Integer.valueOf(ports));
+                 
+                 //write to socket using ObjectOutputStream
+                 oos = new ObjectOutputStream(socket.getOutputStream());
+                 System.out.println("Sending request to Socket Server");
+                // if(i==4)oos.writeObject("exit");
+                  oos.writeObject(modeltemp );
+                 //read the server response message
+                 ois = new ObjectInputStream(socket.getInputStream());
+                 String message;
+                 
+                 modeltemp =  (DefaultListModel<String>) ois.readObject();
+                // login = true;
+               //  System.out.println("Message: " + message);
+               //jList1.setModel(model);
+                 //close resources
+                 ois.close();
+                 oos.close();
+                 Thread.sleep(100);
+         
+             } catch (InterruptedException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }catch (IOException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }catch (ClassNotFoundException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }
+          catch (Exception ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }
+     }
+ }
     /**
      * @param args the command line arguments
      */

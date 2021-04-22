@@ -8,6 +8,7 @@ package p2p_udp_chat_part1;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,12 +19,17 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import static java.nio.file.Files.list;
+import static java.rmi.Naming.list;
+import static java.util.Collections.list;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -43,12 +49,12 @@ public class chat extends javax.swing.JFrame implements Runnable {
  public Channel channel = new Channel();
  public  InetSocketAddress address ;
  public String name;
-   
+      DefaultListModel<String> model = new DefaultListModel<>();
     public chat()  {
       
 		
 		initComponents();
-      
+      jButton1.setEnabled(false);
     }
 
     /**
@@ -168,9 +174,13 @@ public class chat extends javax.swing.JFrame implements Runnable {
 
         jButton4.setText("Logout");
         jButton4.setToolTipText("");
-        jButton4.setActionCommand("Logout");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
-        jTextField_Serverport.setText("6789");
+        jTextField_Serverport.setText("9876");
 
         jLabel8.setText("TCP Server IP ");
 
@@ -403,13 +413,13 @@ public class chat extends javax.swing.JFrame implements Runnable {
         if(jTextArea_messege.getText().trim().equals(""))
             jTextArea_messege.setText("Enter massege");
     }//GEN-LAST:event_jTextArea_messegeFocusLost
-
+   boolean login =false;
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 //     jButton3.addMouseListener(new MouseAdapter(){
 //  public void mouseClicked(MouseEvent me){
-     new Thread() {
-@Override
-public void run() {   
+
+ 
+  
         try {
              InetAddress host;
          
@@ -428,14 +438,15 @@ public void run() {
                  oos = new ObjectOutputStream(socket.getOutputStream());
                  System.out.println("Sending request to Socket Server");
                 // if(i==4)oos.writeObject("exit");
-                  oos.writeObject(jTextField_sorce_ip.getText());
+                  oos.writeObject( "login"+jTextField_sorce_ip.getText() +":"+ jTextField_sorce_port.getText());
                  //read the server response message
                  ois = new ObjectInputStream(socket.getInputStream());
                  String message;
                  
-                 message = (String) ois.readObject();
-                 
-                 System.out.println("Message: " + message);
+                 model =  (DefaultListModel<String>) ois.readObject();
+                 login = true;
+               //  System.out.println("Message: " + message);
+               jList1.setModel(model);
                  //close resources
                  ois.close();
                  oos.close();
@@ -448,15 +459,132 @@ public void run() {
              }catch (ClassNotFoundException ex) {
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }
-        
+            if(login){
+jButton3.setEnabled(false);
+jButton1.setEnabled(true);}
+   new Thread() {
+@Override
+public void run() { 
+    
+    try {
+            ServerSocket server;
+            //socket server port on which it will listen
+            int port = Integer.valueOf(jTextField_sorce_port.getText());
+            server = new ServerSocket(port);
+            //keep listens indefinitely until receives 'exit' call or program terminates
+            while(true){
+                System.out.println("Waiting for the client request");
+                //creating socket and waiting for client connection
+                Socket socket = server.accept();
+                //read from socket to ObjectInputStream object
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                //convert ObjectInputStream object to String
+                String message;
+              
+                    model =  (DefaultListModel<String>) ois.readObject();
+//               if(message.contains("login")){
+//                   message =message.replace("login", "");
+//                     model.addElement(message);
+//             
+//                if(message.contains("logout")){
+//                    message =message.replace("logout", "");
+//                   model.removeElement(message);
+//               }
+               jList1.setModel(model);
+            //    System.out.println("Message Received: " + message);
+              
+                //create ObjectOutputStream object
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                //write object to Socket
+                
+                oos.writeObject(model);
+              
+                //close resources
+                ois.close();
+                oos.close();
+                socket.close();
+                //terminate the server if client sends exit reque st
+              // if(message.equalsIgnoreCase("exit")) break;
+            }
+           // System.out.println("Shutting down Socket server!!");
+            //close the ServerSocket object
+
+        } catch (IOException ex) {
+            Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (ClassNotFoundException ex) {
+                    Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+   
         }
 }.start();  
       
 // };   
 //});
-    
+     jList1.addMouseListener(mouseListener);
              
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    MouseListener mouseListener = new MouseAdapter() {
+        
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            
+            System.out.println(".mouseClicked()");
+          String[] stringarry = jList1.getSelectedValue().split(":");
+            
+                 jTextField_dest_ip.setText(stringarry[0]);
+                         jTextField_dest_port.setText(stringarry[1]);
+
+        }
+    }
+};
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        try {
+                InetAddress host;
+         
+                host = InetAddress.getLocalHost();
+        
+                Socket socket = null;
+                ObjectOutputStream oos = null;
+                ObjectInputStream ois = null;
+        
+             
+                 
+                 //establish socket connection to server
+                 socket = new Socket(host.getHostName(), Integer.valueOf(jTextField_Serverport.getText()));
+                 
+                 //write to socket using ObjectOutputStream
+                 oos = new ObjectOutputStream(socket.getOutputStream());
+                 System.out.println("Sending request to Socket Server");
+                // if(i==4)oos.writeObject("exit");
+                  oos.writeObject( "logout"+jTextField_sorce_ip.getText()+":" + jTextField_sorce_port.getText());
+                 //read the server response message
+                 ois = new ObjectInputStream(socket.getInputStream());
+                 String message ="";
+                 
+                 model =  (DefaultListModel<String>) ois.readObject();
+                 login = true;
+                 System.out.println("Message: " + message);
+                 //close resources
+                 ois.close();
+                 oos.close();
+                 Thread.sleep(100);
+         
+             } catch (InterruptedException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }catch (IOException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }catch (ClassNotFoundException ex) {
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }    
+ jList1.setModel(model);
+login= true;
+jButton3.setEnabled(login);
+jButton1.setEnabled(false);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
