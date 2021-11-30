@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -29,7 +30,10 @@ import static java.util.Collections.list;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.stage.FileChooser;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -48,6 +52,7 @@ public class chat extends javax.swing.JFrame implements Runnable {
     
  public Channel channel = new Channel();
  public  InetSocketAddress address ;
+ String filename;
  public String name;
       DefaultListModel<String> model = new DefaultListModel<>();
     public chat()  {
@@ -95,6 +100,8 @@ public class chat extends javax.swing.JFrame implements Runnable {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        jTextField_path = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -122,7 +129,7 @@ public class chat extends javax.swing.JFrame implements Runnable {
 
         jLabel2.setText("Available Interface");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "intet face 127.0.0.1", "intet face 127.0.0.1" }));
 
         jLabel1.setText("Local IP:");
 
@@ -180,6 +187,12 @@ public class chat extends javax.swing.JFrame implements Runnable {
             }
         });
 
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         jTextField_Serverport.setText("9876");
 
         jLabel8.setText("TCP Server IP ");
@@ -187,6 +200,19 @@ public class chat extends javax.swing.JFrame implements Runnable {
         jLabel9.setText("TCP Server Port ");
 
         jLabel10.setText("Online users ");
+
+        jButton5.setText("File");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jTextField_path.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_pathActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -209,9 +235,16 @@ public class chat extends javax.swing.JFrame implements Runnable {
                         .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField_Serverport, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                            .addComponent(jTextField1)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(15, 15, 15)
@@ -232,96 +265,93 @@ public class chat extends javax.swing.JFrame implements Runnable {
                                             .addComponent(jTextField_dest_ip, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jTextField_dest_port, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jTextField_sorce_ip, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 11, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField_Serverport, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                            .addComponent(jTextField1))))
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(41, 41, 41)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
+                    .addComponent(jLabel10)
+                    .addComponent(jTextField_path, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel7))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextField_name, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton3)
-                                .addComponent(jButton4)))
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel7))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextField_name, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton3)
+                        .addComponent(jButton4)
+                        .addComponent(jButton5)
+                        .addComponent(jTextField_path, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField_Serverport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(201, 201, 201)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(14, 14, 14)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField_Serverport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(13, 13, 13)
-                                        .addComponent(jLabel3)
-                                        .addGap(17, 17, 17)
-                                        .addComponent(jLabel4)
-                                        .addGap(17, 17, 17)
-                                        .addComponent(jLabel5))
+                                        .addGap(201, 201, 201)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jTextField_sorce_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(7, 7, 7)
-                                        .addComponent(jTextField_sorce_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(11, 11, 11)
-                                        .addComponent(jTextField_dest_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(11, 11, 11)
-                                        .addComponent(jTextField_dest_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(14, 14, 14)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addGap(13, 13, 13)
+                                                .addComponent(jLabel3)
+                                                .addGap(17, 17, 17)
+                                                .addComponent(jLabel4)
+                                                .addGap(17, 17, 17)
+                                                .addComponent(jLabel5))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jTextField_sorce_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(7, 7, 7)
+                                                .addComponent(jTextField_sorce_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(11, 11, 11)
+                                                .addComponent(jTextField_dest_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(11, 11, 11)
+                                                .addComponent(jTextField_dest_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel8)
                                         .addGap(0, 0, Short.MAX_VALUE)))
                                 .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1))
-                        .addGap(18, 18, 18)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel6))
+                            .addComponent(jTextField_status, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(21, 21, 21))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(jLabel6))
-                    .addComponent(jTextField_status, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())))
         );
 
         pack();
@@ -376,10 +406,15 @@ public class chat extends javax.swing.JFrame implements Runnable {
         tp.replaceSelection(msg);
     }
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-         int sourcePort =0;
+        jTextPane1.setText("");
+            
+        if(jTextField_dest_port.getText().equals("")|| jTextField_dest_ip.getText().equals("") )
+     JOptionPane.showMessageDialog(this, " Enter destantion Adress ");
+ else{
+        int sourcePort =0;
          String destinationIP ="";
          int destinationPort =0;
-       if(!jTextField_dest_ip.getText().equals(destinationIP) || Integer.parseInt(jTextField_sorce_port.getText())!=sourcePort || Integer.parseInt(jTextField_dest_port.getText())!=destinationPort )
+       if(!jTextField_dest_ip.getText().equals(destinationIP) || Integer.parseInt(jTextField_sorce_port.getText())!= sourcePort || Integer.parseInt(jTextField_dest_port.getText())!=destinationPort )
         try {
             name = jTextField_name.getText();
             
@@ -390,16 +425,22 @@ public class chat extends javax.swing.JFrame implements Runnable {
              destinationPort = Integer.parseInt(jTextField_dest_port.getText());
             
             
-            channel.bind(sourcePort);
-            channel.start(); // Start Receive
+//            channel.bind(sourcePort);
+//            channel.start(); // Start Receive
             
             
           address = new InetSocketAddress(destinationIP, destinationPort);  
           
           jTextField_status.setText(name);
-        } catch (SocketException ex) {
-            Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        } 
+//catch (SocketException ex) {
+//            Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+//        }  
+       catch (Exception ex) {
+               JOptionPane.showMessageDialog(null, ex);
+                 Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
+             }
+ }      
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextArea_messegeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea_messegeFocusGained
@@ -417,14 +458,15 @@ public class chat extends javax.swing.JFrame implements Runnable {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 //     jButton3.addMouseListener(new MouseAdapter(){
 //  public void mouseClicked(MouseEvent me){
-
- 
-  
+ if(jTextField_sorce_port.getText().equals("")|| jTextField_sorce_ip.getText().equals("") )
+     JOptionPane.showMessageDialog(this, " Enter your Adress ");
+ else{
         try {
              InetAddress host;
          
              host = InetAddress.getLocalHost();
-        
+        jTextField_sorce_ip.setText(host.getHostAddress());
+        jTextField_dest_ip.setText(host.getHostAddress());
          Socket socket = null;
          ObjectOutputStream oos = null;
          ObjectInputStream ois = null;
@@ -440,9 +482,12 @@ public class chat extends javax.swing.JFrame implements Runnable {
                 // if(i==4)oos.writeObject("exit");
                   oos.writeObject( "login"+jTextField_sorce_ip.getText() +":"+ jTextField_sorce_port.getText());
                  //read the server response message
-                 ois = new ObjectInputStream(socket.getInputStream());
-                 String message;
                  
+                 ois = new ObjectInputStream(socket.getInputStream());
+                // String message;
+                int sourcePort = Integer.parseInt(jTextField_sorce_port.getText());
+            channel.bind(sourcePort);
+            channel.start();
                  model =  (DefaultListModel<String>) ois.readObject();
                  login = true;
                //  System.out.println("Message: " + message);
@@ -453,15 +498,22 @@ public class chat extends javax.swing.JFrame implements Runnable {
                  Thread.sleep(100);
          
              } catch (InterruptedException ex) {
+                 JOptionPane.showMessageDialog(this, ex);
+                  login = false;
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }catch (IOException ex) {
+                  login = false;
+                     JOptionPane.showMessageDialog(this, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }catch (ClassNotFoundException ex) {
+                  login = false;
+                     JOptionPane.showMessageDialog(this, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }
             if(login){
 jButton3.setEnabled(false);
 jButton1.setEnabled(true);}
+            
    new Thread() {
 @Override
 public void run() { 
@@ -479,7 +531,7 @@ public void run() {
                 //read from socket to ObjectInputStream object
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 //convert ObjectInputStream object to String
-                String message;
+               // String message;
               
                     model =  (DefaultListModel<String>) ois.readObject();
 //               if(message.contains("login")){
@@ -511,10 +563,18 @@ public void run() {
 
         } catch (IOException ex) {
             Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+              JOptionPane.showMessageDialog(null, ex);
         }
         catch (ClassNotFoundException ex) {
                     Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+                      JOptionPane.showMessageDialog(null, ex);
                 }
+
+     catch (Exception ex) {
+         
+            Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+              JOptionPane.showMessageDialog(null, ex);
+        }
    
         }
 }.start();  
@@ -522,7 +582,7 @@ public void run() {
 // };   
 //});
      jList1.addMouseListener(mouseListener);
-             
+ }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     MouseListener mouseListener = new MouseAdapter() {
@@ -579,12 +639,30 @@ public void run() {
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }catch (ClassNotFoundException ex) {
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
-             }    
+             } 
+        model.clear();
  jList1.setModel(model);
 login= true;
 jButton3.setEnabled(login);
 jButton1.setEnabled(false);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    
+       JFileChooser Chooser = new JFileChooser();
+       Chooser.showOpenDialog(null);
+       File f = Chooser.getSelectedFile();
+        filename = f.getAbsolutePath();
+       jTextField_path.setText(filename);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jTextField_pathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_pathActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_pathActionPerformed
 
     /**
      * @param args the command line arguments
@@ -663,9 +741,9 @@ public class Channel implements Runnable
 			try
 			{
 				socket.receive(packet);
-				
-				 msg = new String(buffer, 0, packet.getLength());
-				
+				System.out.println("befor)"+msg);
+				msg = new String(buffer, 0, packet.getLength());
+				System.out.println("p2p_udp_chat_part1.chat.Channel.run()"+msg);
                                 appendToPane(jTextPane1,channel.getmessege()+"\n",Color.BLUE);
                                 String msg2= "Received from:IP="+packet.getAddress()+", Port ="+packet.getPort();
                                 jTextField_status.setText(msg2);
@@ -684,7 +762,7 @@ public class Channel implements Runnable
 	public void sendTo(InetSocketAddress address, String msg) throws IOException
 	{
 		byte[] buffer = msg.getBytes();
-		
+		          System.out.println("p2p_udp_chat_part1.chat.Channel.sendTo()"+address);
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		packet.setSocketAddress(address);
 		
@@ -696,6 +774,7 @@ public class Channel implements Runnable
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -717,6 +796,7 @@ public class Channel implements Runnable
     private javax.swing.JTextField jTextField_dest_ip;
     private javax.swing.JTextField jTextField_dest_port;
     private javax.swing.JTextField jTextField_name;
+    private javax.swing.JTextField jTextField_path;
     private javax.swing.JTextField jTextField_sorce_ip;
     private javax.swing.JTextField jTextField_sorce_port;
     private javax.swing.JTextField jTextField_status;
