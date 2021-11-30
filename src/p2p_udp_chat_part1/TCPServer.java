@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -60,7 +61,7 @@ public class TCPServer extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "intet face 127.0.0.1", "intet face 127.0.0.1" }));
 
         jLabel1.setText("port ");
 
@@ -131,7 +132,7 @@ public class TCPServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField_portActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_portActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code dsadsaddsaasddsadasadsdsa:
     }//GEN-LAST:event_jTextField_portActionPerformed
 
 
@@ -143,6 +144,8 @@ public void run() {     try {
             //socket server port on which it will listen
             int port = Integer.valueOf(jTextField_port.getText());
             server = new ServerSocket(port);
+            jTextField2.setText(InetAddress.getLocalHost()+" :"+port);
+            jTextField2.setEditable(false);
             //keep listens indefinitely until receives 'exit' call or program terminates
             while(true){
                 System.out.println("Waiting for the client request");
@@ -211,7 +214,7 @@ public void run() {     try {
              
                  String[] stringarry = model.get(i).split(":");
                  String ports =stringarry[1];
-               //  System.out.println(ports);
+                System.out.println(ports);
                      DefaultListModel<String> modeltemp = new DefaultListModel<>();
                      for(Object obj :model.toArray()){
   modeltemp.addElement((String) obj);
@@ -240,13 +243,17 @@ public void run() {     try {
                  Thread.sleep(100);
          
              } catch (InterruptedException ex) {
+                  JOptionPane.showMessageDialog(null, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }catch (IOException ex) {
+                  JOptionPane.showMessageDialog(null, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }catch (ClassNotFoundException ex) {
+                  JOptionPane.showMessageDialog(null, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }
           catch (Exception ex) {
+               JOptionPane.showMessageDialog(null, ex);
                  Logger.getLogger(chat.class.getName()).log(Level.SEVERE, null, ex);
              }
      }
